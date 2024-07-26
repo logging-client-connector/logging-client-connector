@@ -1,4 +1,5 @@
 plugins {
+    id 'java'
     id 'groovy'
     id 'maven-publish'
     id 'org.springframework.boot' version '3.3.2' apply(false)
@@ -6,7 +7,7 @@ plugins {
 }
 
 group = 'org.loggingclientconnector'
-version = '0.5.0'
+version = '0.5.1'
 
 java {
     toolchain {
@@ -39,3 +40,41 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            pom {
+                name = 'Logging Client Connector'
+                description = 'A library for logging Spring Webclient requests and responses.'
+                url = 'https://github.com/logging-client-connector/logging-client-connector'
+                licenses {
+                    license {
+                        name = 'The MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'rafalkawczynski'
+                        name = 'Rafał Kawczyński'
+                        email = 'rafal.kawczynski@outlook.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/logging-client-connector/logging-client-connector.git'
+                    developerConnection = 'scm:git:ssh://github.com:logging-client-connector/logging-client-connector.git'
+                    url = 'https://github.com/logging-client-connector/logging-client-connector'
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = 'jitpack'
+            url = uri('https://jitpack.io')
+        }
+    }
+}
