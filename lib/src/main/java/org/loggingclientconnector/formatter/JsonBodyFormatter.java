@@ -6,7 +6,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.loggingclientconnector.customizer.Blacklist;
+import org.loggingclientconnector.customizer.Blocklist;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -42,10 +42,10 @@ class JsonBodyFormatter implements BodyFormatter {
 	}
 
 	@Override
-	public String formatBody(String content, Blacklist blacklist) {
+	public String formatBody(String content, Blocklist blocklist) {
 		try {
 			JsonNode jsonNode = mapper.readTree(content);
-			jsonNode = removeBlacklisted(jsonNode, blacklist);
+			jsonNode = removeBlocklisted(jsonNode, blocklist);
 			return mapper.writer(prettyPrinter).writeValueAsString(jsonNode)
 					.replaceAll("(?m)^", "  ");
 		} catch (JsonProcessingException e) {
@@ -53,8 +53,8 @@ class JsonBodyFormatter implements BodyFormatter {
 		}
 	}
 
-	public JsonNode removeBlacklisted(JsonNode jsonNode, Blacklist blacklist) {
-		blacklist.properties().forEach((field) -> replaceField(jsonNode, field));
+	public JsonNode removeBlocklisted(JsonNode jsonNode, Blocklist blocklist) {
+		blocklist.properties().forEach((field) -> replaceField(jsonNode, field));
 		return jsonNode;
 	}
 
@@ -66,7 +66,7 @@ class JsonBodyFormatter implements BodyFormatter {
 
 			fields.forEachRemaining((field) -> {
 				if (field.getKey().equals(fieldName)) {
-					objectNode.put(field.getKey(), Blacklist.REPLACEMENT_VALUE);
+					objectNode.put(field.getKey(), Blocklist.REPLACEMENT_VALUE);
 				} else {
 					replaceField(field.getValue(), fieldName);
 				}

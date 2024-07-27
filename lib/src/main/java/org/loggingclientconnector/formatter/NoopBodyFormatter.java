@@ -1,7 +1,7 @@
 package org.loggingclientconnector.formatter;
 
 
-import org.loggingclientconnector.customizer.Blacklist;
+import org.loggingclientconnector.customizer.Blocklist;
 
 class NoopBodyFormatter implements BodyFormatter {
 
@@ -12,7 +12,7 @@ class NoopBodyFormatter implements BodyFormatter {
 	}
 
 	@Override
-	public String formatBody(String content, Blacklist blacklist) {
+	public String formatBody(String content, Blocklist blocklist) {
 		return content;
 	}
 }

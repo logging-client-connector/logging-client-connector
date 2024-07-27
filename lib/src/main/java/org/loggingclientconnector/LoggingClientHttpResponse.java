@@ -28,7 +28,7 @@ class LoggingClientHttpResponse extends ClientHttpResponseDecorator {
 
 	public LoggingClientHttpResponse withConfiguration(Configuration configuration) {
 		this.formatter = configuration.getFormatter()
-				.addResponseBlacklist(configuration.getBlacklistConfig().getResponseBlacklist());
+				.addResponseBlocklist(configuration.getBlocklistConfig().getResponseBlocklist());
 
 		this.logger = LoggerFactory.getLogger(DEFAULT_LOGGER_NAME, configuration.getLoggerConfig().getLogLevel());
 		return this;

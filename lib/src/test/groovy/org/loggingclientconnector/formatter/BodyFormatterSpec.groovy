@@ -1,7 +1,7 @@
 package org.loggingclientconnector.formatter
 
 import extension.JsonCompare
-import org.loggingclientconnector.customizer.Blacklist
+import org.loggingclientconnector.customizer.Blocklist
 import spock.lang.Specification
 import spock.util.mop.Use
 
@@ -11,7 +11,7 @@ class BodyFormatterSpec extends Specification {
 
 	def "should be able to format body"() {
 		when:
-		def formatted = BodyFormatter.format(""" { "test": "1" } """, Blacklist.of())
+		def formatted = BodyFormatter.format(""" { "test": "1" } """, Blocklist.of())
 
 		then:
 		formatted.equals """
@@ -23,7 +23,7 @@ class BodyFormatterSpec extends Specification {
 
 	def "should not throw exception when input is null"() {
 		when:
-		def formatted = BodyFormatter.format(null, Blacklist.of())
+		def formatted = BodyFormatter.format(null, Blocklist.of())
 
 		then:
 		formatted.contains("[Empty Body]")
@@ -31,7 +31,7 @@ class BodyFormatterSpec extends Specification {
 
 	def "should get the same text when try to format input which is not json or form data"() {
 		when:
-		def formatted = BodyFormatter.format("samle text", Blacklist.of())
+		def formatted = BodyFormatter.format("samle text", Blocklist.of())
 
 		then:
 		formatted == "samle text"
