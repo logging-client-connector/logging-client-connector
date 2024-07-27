@@ -1,6 +1,6 @@
 package org.loggingclientconnector.formatter
 
-import org.loggingclientconnector.customizer.Blacklist
+import org.loggingclientconnector.customizer.Blocklist
 import spock.lang.Specification
 
 class FormBodyFormatterSpec extends Specification {
@@ -20,11 +20,11 @@ class FormBodyFormatterSpec extends Specification {
 	def "test formatBody"() {
 		given:
 		var formatter = FormBodyFormatter.getInstance()
-		var blacklist = Blacklist.of("key2")
+		var blocklist = Blocklist.of("key2")
 		var content = "key1=value1&key2=value2&key3=value3"
 
 		when:
-		var result = formatter.formatBody(content, blacklist)
+		var result = formatter.formatBody(content, blocklist)
 
 		then:
 		result.contains("key1: value1")

@@ -41,8 +41,8 @@ class LoggingClientHttpRequest extends ClientHttpRequestDecorator {
 
 	public LoggingClientHttpRequest withConfiguration(Configuration configuration) {
 		this.formatter = configuration.getFormatter()
-				.addRequestBlacklist(configuration.getBlacklistConfig().getRequestBlacklist())
-				.addRequestHeaderBlacklist(configuration.getBlacklistConfig().getRequestHeaderBlacklist());
+				.addRequestBlocklist(configuration.getBlocklistConfig().getRequestBlocklist())
+				.addRequestHeaderBlocklist(configuration.getBlocklistConfig().getRequestHeaderBlocklist());
 		this.logger = LoggerFactory.getLogger(DEFAULT_LOGGER_NAME, configuration.getLoggerConfig().getLogLevel());
 		return this;
 	}

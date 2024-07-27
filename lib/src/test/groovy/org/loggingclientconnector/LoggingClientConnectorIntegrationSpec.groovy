@@ -1,7 +1,7 @@
 package org.loggingclientconnector
 
 import log.appender.TestAppender
-import org.loggingclientconnector.customizer.Blacklist
+import org.loggingclientconnector.customizer.Blocklist
 import org.mockserver.integration.ClientAndServer
 import org.springframework.web.reactive.function.client.WebClient
 import spock.lang.Execution
@@ -51,14 +51,14 @@ class LoggingClientConnectorIntegrationSpec extends Specification {
 	}
 
 	def "should not log protected values"() {
-		given: "setup blacklisted values"
+		given: "setup blocklisted values"
 		def loggingClientConnector = LoggingClientConnector.create().configure { config ->
 			config.loggerConfig { loggerConfig -> loggerConfig.logLevel(LogLevel.INFO) }
-					.blacklistConfig { blacklistConfig ->
-						blacklistConfig
-								.requestBlacklist(Blacklist.of("password"))
-								.requestHeaderBlacklist(Blacklist.of("Authorization"))
-								.responseBlacklist(Blacklist.of("secret"))
+					.blocklistConfig { blocklistConfig ->
+						blocklistConfig
+								.requestBlocklist(Blocklist.of("password"))
+								.requestHeaderBlocklist(Blocklist.of("Authorization"))
+								.responseBlocklist(Blocklist.of("secret"))
 					}
 		}
 

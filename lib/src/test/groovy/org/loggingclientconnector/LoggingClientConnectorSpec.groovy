@@ -1,6 +1,6 @@
 package org.loggingclientconnector
 
-import org.loggingclientconnector.customizer.Blacklist
+import org.loggingclientconnector.customizer.Blocklist
 import org.loggingclientconnector.formatter.Formatter
 import spock.lang.Specification
 
@@ -14,10 +14,10 @@ class LoggingClientConnectorSpec extends Specification {
 		when:
 		clientConnector.configure { configuration ->
 			configuration
-					.blacklistConfig { blacklistConfig ->
-						blacklistConfig.requestBlacklist(Blacklist.of("password"))
-								.responseBlacklist(Blacklist.of("secret"))
-								.requestHeaderBlacklist(Blacklist.of("Authorization"))
+					.blocklistConfig { blocklistConfig ->
+						blocklistConfig.requestBlocklist(Blocklist.of("password"))
+								.responseBlocklist(Blocklist.of("secret"))
+								.requestHeaderBlocklist(Blocklist.of("Authorization"))
 					}
 					.formatter { formatterConfig -> Formatter.newFormatter() }
 					.loggerConfig { loggerConfig ->
@@ -28,9 +28,9 @@ class LoggingClientConnectorSpec extends Specification {
 		then:
 		def configuration = clientConnector.getConfiguration()
 
-		configuration.blacklistConfig.requestBlacklist == Blacklist.of("password")
-		configuration.blacklistConfig.responseBlacklist == Blacklist.of("secret")
-		configuration.blacklistConfig.requestHeaderBlacklist == Blacklist.of("Authorization")
+		configuration.blocklistConfig.requestBlocklist == Blocklist.of("password")
+		configuration.blocklistConfig.responseBlocklist == Blocklist.of("secret")
+		configuration.blocklistConfig.requestHeaderBlocklist == Blocklist.of("Authorization")
 		configuration.formatter == Formatter.newFormatter()
 		configuration.loggerConfig.logLevel == LogLevel.INFO
 		configuration.loggerConfig.requestLoggerName == "Request Logger"

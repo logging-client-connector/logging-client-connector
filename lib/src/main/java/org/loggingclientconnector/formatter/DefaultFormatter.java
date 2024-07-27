@@ -1,6 +1,6 @@
 package org.loggingclientconnector.formatter;
 
-import org.loggingclientconnector.customizer.Blacklist;
+import org.loggingclientconnector.customizer.Blocklist;
 
 
 @SuppressWarnings("StringBufferReplaceableByString")
@@ -8,17 +8,17 @@ class DefaultFormatter implements Formatter {
 
 	private static final String NEW_LINE = System.lineSeparator();
 
-	private Blacklist requestBlacklist = Blacklist.newBlacklist();
-	private Blacklist responseBlacklist = Blacklist.newBlacklist();
-	private Blacklist requestHeaderBlacklist = Blacklist.newBlacklist();
+	private Blocklist requestBlocklist = Blocklist.newBlocklist();
+	private Blocklist responseBlocklist = Blocklist.newBlocklist();
+	private Blocklist requestHeaderBlocklist = Blocklist.newBlocklist();
 
 	DefaultFormatter() {
 	}
 
 	@Override
 	public String formatRequest(RequestPayload payload) {
-		var body = BodyFormatter.format(payload.body(), requestBlacklist);
-		var headers = HeaderFormatter.formatHeader(payload, requestHeaderBlacklist);
+		var body = BodyFormatter.format(payload.body(), requestBlocklist);
+		var headers = HeaderFormatter.formatHeader(payload, requestHeaderBlocklist);
 
 		return new StringBuilder()
 				.append(NEW_LINE)
@@ -34,7 +34,7 @@ class DefaultFormatter implements Formatter {
 
 	@Override
 	public String formatResponse(ResponsePayload payload) {
-		var body = BodyFormatter.format(payload.body(), responseBlacklist);
+		var body = BodyFormatter.format(payload.body(), responseBlocklist);
 
 		return new StringBuilder()
 				.append(NEW_LINE)
@@ -48,20 +48,20 @@ class DefaultFormatter implements Formatter {
 	}
 
 	@Override
-	public Formatter addRequestBlacklist(Blacklist blacklist) {
-		this.requestBlacklist = blacklist;
+	public Formatter addRequestBlocklist(Blocklist blocklist) {
+		this.requestBlocklist = blocklist;
 		return this;
 	}
 
 	@Override
-	public Formatter addResponseBlacklist(Blacklist blacklist) {
-		this.responseBlacklist = blacklist;
+	public Formatter addResponseBlocklist(Blocklist blocklist) {
+		this.responseBlocklist = blocklist;
 		return this;
 	}
 
 	@Override
-	public Formatter addRequestHeaderBlacklist(Blacklist blacklist) {
-		this.requestHeaderBlacklist = blacklist;
+	public Formatter addRequestHeaderBlocklist(Blocklist blocklist) {
+		this.requestHeaderBlocklist = blocklist;
 		return this;
 	}
 
@@ -70,16 +70,16 @@ class DefaultFormatter implements Formatter {
 		if (this == o) return true;
 		if (!(o instanceof DefaultFormatter that)) return false;
 
-		return requestBlacklist.equals(that.requestBlacklist)
-				&& responseBlacklist.equals(that.responseBlacklist)
-				&& requestHeaderBlacklist.equals(that.requestHeaderBlacklist);
+		return requestBlocklist.equals(that.requestBlocklist)
+				&& responseBlocklist.equals(that.responseBlocklist)
+				&& requestHeaderBlocklist.equals(that.requestHeaderBlocklist);
 	}
 
 	@Override
 	public int hashCode() {
-		int result = requestBlacklist.hashCode();
-		result = 31 * result + responseBlacklist.hashCode();
-		result = 31 * result + requestHeaderBlacklist.hashCode();
+		int result = requestBlocklist.hashCode();
+		result = 31 * result + responseBlocklist.hashCode();
+		result = 31 * result + requestHeaderBlocklist.hashCode();
 		return result;
 	}
 }
