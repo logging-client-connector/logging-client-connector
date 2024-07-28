@@ -1,5 +1,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/logging-client-connector/logging-client-connector/blob/main/LICENSE)
 [![](https://jitpack.io/v/logging-client-connector/logging-client-connector.svg)](https://jitpack.io/#logging-client-connector/logging-client-connector)
+[![codecov](https://codecov.io/gh/logging-client-connector/logging-client-connector/graph/badge.svg?token=1Y0QWR8XGT)](https://codecov.io/gh/logging-client-connector/logging-client-connector)
 
 # Logging Client Connector
 
