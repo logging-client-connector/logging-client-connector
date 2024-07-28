@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'groovy'
+    id 'jacoco'
     id 'java-library'
     id 'maven-publish'
     id 'org.springframework.boot' version '3.3.2' apply(false)
@@ -39,8 +40,17 @@ dependencies {
     testImplementation 'org.mock-server:mockserver-client-java:5.15.0'
 }
 
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
 tasks.named('test') {
     useJUnitPlatform()
+    finalizedBy('jacocoTestReport')
 }
 
 publishing {
