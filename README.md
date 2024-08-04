@@ -20,9 +20,19 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.logging-client-connector:logging-client-connector:1.0.0'
+    implementation 'com.github.logging-client-connector:logging-client-connector:1.1.0'
 }
 ```
+
+### Optional Dependencies
+
+To use XML logging, you need to add the following dependency to your `build.gradle` file:
+
+```groovy
+implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.17.2'
+```
+
+> Note: The minimum required version of jackson-dataformat-xml is 2.13.x. Ensure your version meets this requirement.
 
 ### Example Usage
 
