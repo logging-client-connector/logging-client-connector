@@ -8,20 +8,26 @@ import static org.loggingclientconnector.formatter.LibraryServiceLoader.getXmlPr
 
 class XmlBodyFormatter implements BodyFormatter {
 
-	private static final XmlBodyFormatter INSTANCE = new XmlBodyFormatter();
-	private static final XmlProcessor xmlProcessor = getXmlProcessor();
+	private static XmlBodyFormatter INSTANCE;
+	private static XmlProcessor xmlProcessor;
 
 	private XmlBodyFormatter() {
+		xmlProcessor = getXmlProcessor();
 	}
 
-	static XmlBodyFormatter getInstance() {
+	static synchronized XmlBodyFormatter getInstance() {
+		if (INSTANCE == null) {
+			INSTANCE = new XmlBodyFormatter();
+		}
 		return INSTANCE;
 	}
 
 	static boolean isXml(String content) {
+		if (xmlProcessor == null) {
+			xmlProcessor = getXmlProcessor();
+		}
 		return xmlProcessor.isXml(content);
 	}
-
 
 	@Override
 	public String formatBody(String content, Blocklist blocklist) {
