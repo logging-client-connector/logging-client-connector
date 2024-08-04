@@ -12,19 +12,23 @@ class LibraryServiceLoader {
 	private static final Logger logger = LoggerFactory.getLogger(LibraryServiceLoader.class);
 
 	public static XmlProcessor getXmlProcessor() {
-		var loader = ServiceLoader.load(XmlProcessor.class);
-		var iterator = loader.iterator();
-		XmlProcessor found = null;
-		while (iterator.hasNext()) {
-			try {
-				found = iterator.next();
-			} catch (Error ignored) {
-			}
-		}
-		return Optional.ofNullable(found)
+		return ServiceLoader.load(XmlProcessor.class)
+				.stream()
+				.map(LibraryServiceLoader::provide)
+				.filter(Optional::isPresent)
+				.map(Optional::get)
+				.findFirst()
 				.orElseGet(() -> {
 					logger.warn("No jackson-dataformat-xml found on classpath. if you need to log xml, please add it to your dependencies.");
 					return XmlProcessor.NoopXmlProcessor.getInstance();
 				});
+	}
+
+	public static <T> Optional<T> provide(ServiceLoader.Provider<T> provider) {
+		try {
+			return Optional.of(provider.get());
+		} catch (Throwable ignored) {
+		}
+		return Optional.empty();
 	}
 }
