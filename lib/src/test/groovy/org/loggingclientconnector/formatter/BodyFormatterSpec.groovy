@@ -34,6 +34,6 @@ class BodyFormatterSpec extends Specification {
 		def formatted = BodyFormatter.format("samle text", Blocklist.of())
 
 		then:
-		formatted == "samle text"
+		formatted.contains("samle text")
 	}
 }

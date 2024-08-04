@@ -12,13 +12,14 @@ import reactor.core.publisher.BaseSubscriber;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.Charset;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static org.loggingclientconnector.LogLevel.INFO;
 
 
 class LoggingClientHttpRequest extends ClientHttpRequestDecorator {
 
-	public static final String DEFAULT_LOGGER_NAME = "Request Logger";
-
-	private LoggingEventBuilder logger = LoggerFactory.getLogger("Request Logger", LogLevel.DEBUG);
+	private LoggingEventBuilder logger = LoggerFactory.getLogger("Request Logger", INFO);
 	private Formatter formatter = Formatter.newFormatter();
 
 	private LoggingClientHttpRequest(ClientHttpRequest delegate) {
@@ -43,7 +44,7 @@ class LoggingClientHttpRequest extends ClientHttpRequestDecorator {
 		this.formatter = configuration.getFormatter()
 				.addRequestBlocklist(configuration.getBlocklistConfig().getRequestBlocklist())
 				.addRequestHeaderBlocklist(configuration.getBlocklistConfig().getRequestHeaderBlocklist());
-		this.logger = LoggerFactory.getLogger(DEFAULT_LOGGER_NAME, configuration.getLoggerConfig().getLogLevel());
+		this.logger = LoggerFactory.getLogger(configuration.getLoggerConfig().getRequestLoggerName(), configuration.getLoggerConfig().getLogLevel());
 		return this;
 	}
 
@@ -56,12 +57,21 @@ class LoggingClientHttpRequest extends ClientHttpRequestDecorator {
 
 	@Override
 	public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) {
+		final var bodyReference = new AtomicReference<>(new StringBuilder());
+		final var requestReference = new AtomicReference<ClientHttpRequest>();
 		BaseSubscriber<DataBuffer> bodySubscriber = new BaseSubscriber<>() {
+
 			@Override
 			protected void hookOnNext(DataBuffer dataBuffer) {
 				String bodyString = dataBuffer.toString(Charset.defaultCharset());
 				ClientHttpRequest request = getDelegate();
-				logRequest(bodyString, request);
+				requestReference.set(request);
+				bodyReference.get().append(bodyString);
+			}
+
+			@Override
+			protected void hookOnComplete() {
+				logRequest(bodyReference.get().toString(), requestReference.get());
 			}
 		};
 		body.subscribe(bodySubscriber);
@@ -70,11 +80,20 @@ class LoggingClientHttpRequest extends ClientHttpRequestDecorator {
 
 	@Override
 	public Mono<Void> writeAndFlushWith(Publisher<? extends Publisher<? extends DataBuffer>> body) {
+		final var bodyReference = new AtomicReference<>(new StringBuilder());
+		final var requestReference = new AtomicReference<ClientHttpRequest>();
 		BaseSubscriber<Publisher<? extends DataBuffer>> bodySubscriber = new BaseSubscriber<>() {
+
 			@Override
 			protected void hookOnNext(Publisher<? extends DataBuffer> next) {
 				ClientHttpRequest request = getDelegate();
-				logRequest(next.toString(), request);
+				requestReference.set(request);
+				bodyReference.get().append(next);
+			}
+
+			@Override
+			protected void hookOnComplete() {
+				logRequest(bodyReference.get().toString(), requestReference.get());
 			}
 		};
 		body.subscribe(bodySubscriber);

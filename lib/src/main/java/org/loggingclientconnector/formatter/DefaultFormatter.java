@@ -6,6 +6,7 @@ import org.loggingclientconnector.customizer.Blocklist;
 @SuppressWarnings("StringBufferReplaceableByString")
 class DefaultFormatter implements Formatter {
 
+	private static final String EMPTY = "";
 	private static final String NEW_LINE = System.lineSeparator();
 
 	private Blocklist requestBlocklist = Blocklist.newBlocklist();
@@ -17,8 +18,10 @@ class DefaultFormatter implements Formatter {
 
 	@Override
 	public String formatRequest(RequestPayload payload) {
-		var body = BodyFormatter.format(payload.body(), requestBlocklist);
 		var headers = HeaderFormatter.formatHeader(payload, requestHeaderBlocklist);
+		var contentType = headers.getOrDefault("Content-Type", EMPTY);
+		var bodyType = BodyType.detect(contentType);
+		var body = BodyFormatter.format(payload.body(), bodyType, requestBlocklist);
 
 		return new StringBuilder()
 				.append(NEW_LINE)
@@ -34,7 +37,9 @@ class DefaultFormatter implements Formatter {
 
 	@Override
 	public String formatResponse(ResponsePayload payload) {
-		var body = BodyFormatter.format(payload.body(), responseBlocklist);
+		var contentType = payload.headers().getOrDefault("Content-Type", EMPTY);
+		var bodyType = BodyType.detect(contentType);
+		var body = BodyFormatter.format(payload.body(), bodyType, responseBlocklist);
 
 		return new StringBuilder()
 				.append(NEW_LINE)

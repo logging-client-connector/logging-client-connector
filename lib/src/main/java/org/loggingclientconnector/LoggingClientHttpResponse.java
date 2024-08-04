@@ -13,9 +13,7 @@ import static java.nio.charset.Charset.defaultCharset;
 
 class LoggingClientHttpResponse extends ClientHttpResponseDecorator {
 
-	public static final String DEFAULT_LOGGER_NAME = "Response Logger";
-
-	private LoggingEventBuilder logger = LoggerFactory.getLogger("Response Logger", LogLevel.DEBUG);
+	private LoggingEventBuilder logger = LoggerFactory.getLogger("Response Logger", LogLevel.INFO);
 	private Formatter formatter = Formatter.newFormatter();
 
 	public LoggingClientHttpResponse(ClientHttpResponse delegate) {
@@ -30,7 +28,7 @@ class LoggingClientHttpResponse extends ClientHttpResponseDecorator {
 		this.formatter = configuration.getFormatter()
 				.addResponseBlocklist(configuration.getBlocklistConfig().getResponseBlocklist());
 
-		this.logger = LoggerFactory.getLogger(DEFAULT_LOGGER_NAME, configuration.getLoggerConfig().getLogLevel());
+		this.logger = LoggerFactory.getLogger(configuration.getLoggerConfig().getResponseLoggerName(), configuration.getLoggerConfig().getLogLevel());
 		return this;
 	}
 
