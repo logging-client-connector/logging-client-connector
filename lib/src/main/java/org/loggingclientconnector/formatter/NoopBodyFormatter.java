@@ -13,6 +13,6 @@ class NoopBodyFormatter implements BodyFormatter {
 
 	@Override
 	public String formatBody(String content, Blocklist blocklist) {
-		return content;
+		return "  [\n" + content.replaceAll("(?m)^", "    ") + "\n  ]";
 	}
 }
