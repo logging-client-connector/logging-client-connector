@@ -7,4 +7,6 @@
 	<root level="INFO">
 		<appender-ref ref="CONSOLE"/>
 	</root>
+
+	<logger name="org.mockserver.log" level="OFF"/>
 </configuration>

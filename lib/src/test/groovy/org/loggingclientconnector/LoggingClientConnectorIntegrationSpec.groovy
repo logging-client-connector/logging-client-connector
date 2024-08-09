@@ -5,6 +5,7 @@ import org.loggingclientconnector.customizer.Blocklist
 import org.mockserver.integration.ClientAndServer
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
+import reactor.core.publisher.Mono
 import spock.lang.Execution
 import spock.lang.Specification
 
@@ -13,6 +14,7 @@ import static fixture.LoggingFixture.REQUEST_LOGGER_NAME
 import static fixture.LoggingFixture.RESPONSE_LOGGER_NAME
 import static org.loggingclientconnector.LogLevel.INFO
 import static org.spockframework.runtime.model.parallel.ExecutionMode.SAME_THREAD
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 
 @Execution(SAME_THREAD)
 class LoggingClientConnectorIntegrationSpec extends Specification {
@@ -184,5 +186,42 @@ class LoggingClientConnectorIntegrationSpec extends Specification {
 
 		then: "verify that logger still works"
 		capture.contains(~/method: GET/)
+	}
+
+	def "should log when there is no response body"() {
+		given:
+		def loggingClientConnector = LoggingClientConnector.create()
+				.configure(config -> config
+						.loggerConfig { loggerConfig -> loggerConfig.logLevel(INFO) })
+
+		def client = WebClient.builder()
+				.clientConnector(loggingClientConnector).build()
+
+		and: "setup mock server"
+		mockServer.when(requestWithWrongData())
+				.respond(responseWithStatus500())
+
+		when:
+		client.post()
+				.uri("http://localhost:${mockServer.localPort}/error")
+				.bodyValue([wrongData: 'value1'])
+				.retrieve()
+				.onStatus(INTERNAL_SERVER_ERROR::equals, response -> Mono.error(new Ex("Error Message")))
+				.bodyToMono(String)
+				.blockOptional()
+
+		then:
+		def exception = thrown(Ex)
+		exception.message == "Error Message"
+
+		and:
+		logCapture.contains(~/status code.*500/)
+		logCapture.contains(~/Empty Body/)
+	}
+
+	static class Ex extends RuntimeException {
+		Ex(String message) {
+			super(message)
+		}
 	}
 }
