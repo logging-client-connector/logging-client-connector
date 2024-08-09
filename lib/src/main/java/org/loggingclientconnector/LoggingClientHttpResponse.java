@@ -9,10 +9,12 @@ import org.springframework.http.client.reactive.ClientHttpResponseDecorator;
 import reactor.core.publisher.Flux;
 
 import static java.nio.charset.Charset.defaultCharset;
+import static org.loggingclientconnector.Fn.ifNonNull;
 
 
 class LoggingClientHttpResponse extends ClientHttpResponseDecorator {
 
+	public static final String EMPTY_BODY = "";
 	private LoggingEventBuilder logger = LoggerFactory.getLogger("Response Logger", LogLevel.INFO);
 	private Formatter formatter = Formatter.newFormatter();
 
@@ -35,11 +37,16 @@ class LoggingClientHttpResponse extends ClientHttpResponseDecorator {
 	@Override
 	public Flux<DataBuffer> getBody() {
 		return getDelegate().getBody()
-				.map(dataBuffer -> {
-					var body = dataBuffer.toString(defaultCharset());
-					var payload = toResponsePayload(body);
-					logger.log(formatter.formatResponse(payload));
-					return dataBuffer;
+				.doOnEach(signal -> {
+					var databuffer = signal.get();
+					ifNonNull(() -> databuffer, () -> {
+						var body = databuffer.toString(defaultCharset());
+						var payload = toResponsePayload(body);
+						logger.log(formatter.formatResponse(payload));
+					}).orElse(() -> {
+						var payload = toResponsePayload(EMPTY_BODY);
+						logger.log(formatter.formatResponse(payload));
+					});
 				});
 	}
 

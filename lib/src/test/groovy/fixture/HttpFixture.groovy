@@ -74,4 +74,14 @@ class HttpFixture {
 					}
 				""")
 	}
+
+	static HttpRequest requestWithWrongData() {
+		request()
+				.withMethod("POST")
+				.withPath("/error")
+	}
+
+	static HttpResponse responseWithStatus500() {
+		response().withStatusCode(500)
+	}
 }
