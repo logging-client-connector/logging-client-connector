@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.logging-client-connector:logging-client-connector:1.2.1'
+    implementation 'com.github.logging-client-connector:logging-client-connector:1.2.2'
 }
 ```
 

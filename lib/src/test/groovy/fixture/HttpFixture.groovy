@@ -9,14 +9,14 @@ import static org.mockserver.model.HttpResponse.response
 
 class HttpFixture {
 
-	static LinkedMultiValueMap<String, Object> someMultipartFormDataRequest() {
+	static LinkedMultiValueMap<String, Object> someMultipartFormDataBody() {
 		def request = new LinkedMultiValueMap<String, Object>()
 		request.add("key1", "value1")
 		request.add("key2", "value2")
 		request
 	}
 
-	static String someXmlRequest() {
+	static String someXmlBody() {
 		"""
 			<note>
 				<heading>Reminder</heading>
@@ -58,6 +58,12 @@ class HttpFixture {
 		request()
 				.withMethod("POST")
 				.withPath("/protected")
+	}
+
+	static HttpRequest requestWithXmlData() {
+		request()
+				.withMethod("POST")
+				.withPath("/xml")
 	}
 
 	static HttpRequest requestWithMultipartFormData() {

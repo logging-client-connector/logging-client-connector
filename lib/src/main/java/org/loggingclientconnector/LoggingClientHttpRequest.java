@@ -4,6 +4,7 @@ import org.loggingclientconnector.customizer.Configuration;
 import org.loggingclientconnector.formatter.Formatter;
 import org.loggingclientconnector.formatter.Formatter.RequestPayload;
 import org.reactivestreams.Publisher;
+import org.slf4j.Logger;
 import org.slf4j.spi.LoggingEventBuilder;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.client.reactive.ClientHttpRequest;
@@ -19,11 +20,13 @@ import static org.loggingclientconnector.LogLevel.INFO;
 
 class LoggingClientHttpRequest extends ClientHttpRequestDecorator {
 
+	private static final Logger log = org.slf4j.LoggerFactory.getLogger(LoggingClientHttpRequest.class);
 	private LoggingEventBuilder logger = LoggerFactory.getLogger("Request Logger", INFO);
 	private Formatter formatter = Formatter.newFormatter();
 
 	private LoggingClientHttpRequest(ClientHttpRequest delegate) {
 		super(delegate);
+		log.trace("Creating LoggingClientHttpRequest with delegate: {}", delegate);
 	}
 
 	public static LoggingClientHttpRequest decorate(ClientHttpRequest delegate) {
