@@ -164,8 +164,8 @@ class LoggingClientConnectorIntegrationSpec extends Specification {
 		def loggingClientConnector = LoggingClientConnector.create()
 				.configure(config -> config
 						.loggerConfig(loggerConfig -> loggerConfig
-								.requestLoggerName(this.class.name)
-								.responseLoggerName(this.class.name)
+								.requestLogger(this.class)
+								.responseLogger(this.class)
 								.logLevel(INFO)
 						)
 				)

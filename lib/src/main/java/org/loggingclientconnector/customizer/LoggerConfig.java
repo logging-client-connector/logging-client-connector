@@ -37,6 +37,28 @@ public final class LoggerConfig {
 	}
 
 	/**
+	 * Sets the request logger using the provided class.
+	 *
+	 * @param clazz the class whose name will be used as the request logger name
+	 * @return the updated {@link LoggerConfig} instance
+	 */
+	public LoggerConfig requestLogger(Class<?> clazz) {
+		this.requestLoggerName = clazz.getName();
+		return this;
+	}
+
+	/**
+	 * Sets the response logger using the provided class.
+	 *
+	 * @param clazz the class whose name will be used as the response logger name
+	 * @return the updated {@link LoggerConfig} instance
+	 */
+	public LoggerConfig responseLogger(Class<?> clazz) {
+		this.responseLoggerName = clazz.getName();
+		return this;
+	}
+
+	/**
 	 * Sets the request logger name.
 	 *
 	 * @param loggerName the name to set for the request logger
