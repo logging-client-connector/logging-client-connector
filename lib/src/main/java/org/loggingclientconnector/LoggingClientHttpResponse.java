@@ -8,8 +8,10 @@ import org.springframework.http.client.reactive.ClientHttpResponse;
 import org.springframework.http.client.reactive.ClientHttpResponseDecorator;
 import reactor.core.publisher.Flux;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import static java.nio.charset.Charset.defaultCharset;
-import static org.loggingclientconnector.Fn.ifNonNull;
+import static org.loggingclientconnector.Fn.doWhen;
 
 
 class LoggingClientHttpResponse extends ClientHttpResponseDecorator {
@@ -36,18 +38,23 @@ class LoggingClientHttpResponse extends ClientHttpResponseDecorator {
 
 	@Override
 	public Flux<DataBuffer> getBody() {
+		var responseLogged = new AtomicReference<>(false);
 		return getDelegate().getBody()
-				.doOnEach(signal -> {
-					var databuffer = signal.get();
-					ifNonNull(() -> databuffer, () -> {
-						var body = databuffer.toString(defaultCharset());
-						var payload = toResponsePayload(body);
-						logger.log(formatter.formatResponse(payload));
-					}).orElse(() -> {
-						var payload = toResponsePayload(EMPTY_BODY);
-						logger.log(formatter.formatResponse(payload));
-					});
-				});
+				.doOnNext(databuffer -> doWhen(
+						!responseLogged.get(),
+						() -> {
+							var payload = toResponsePayload(databuffer.toString(defaultCharset()));
+							logger.log(formatter.formatResponse(payload));
+							responseLogged.set(true);
+						}
+				)).doOnComplete(() -> doWhen(
+						!responseLogged.get(),
+						() -> {
+							var payload = toResponsePayload(EMPTY_BODY);
+							logger.log(formatter.formatResponse(payload));
+							responseLogged.set(true);
+						}
+				));
 	}
 
 	private Formatter.ResponsePayload toResponsePayload(String body) {
