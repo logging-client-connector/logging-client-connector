@@ -100,7 +100,7 @@ class LoggingClientConnectorIntegrationSpec extends Specification {
 				.configure(config -> config
 						.loggerConfig { loggerConfig -> loggerConfig.logLevel(INFO) })
 
-		def requestBody = someMultipartFormDataRequest()
+		def requestBody = someMultipartFormDataBody()
 
 		def client = WebClient.builder()
 				.clientConnector(loggingClientConnector).build()
@@ -133,18 +133,18 @@ class LoggingClientConnectorIntegrationSpec extends Specification {
 						)
 				)
 
-		def requestBody = someXmlRequest()
+		def requestBody = someXmlBody()
 
 		def client = WebClient.builder()
 				.clientConnector(loggingClientConnector).build()
 
 		and: "setup mock server"
-		mockServer.when(requestWithMultipartFormData())
-				.respond(responseWithMultipartFormData())
+		mockServer.when(requestWithXmlData())
+				.respond(someResponse())
 
 		when:
 		client.post()
-				.uri("http://localhost:${mockServer.localPort}/multipart")
+				.uri("http://localhost:${mockServer.localPort}/xml")
 		// content type is required to log xml data
 				.headers { headers -> headers.add("Content-Type", "application/xml") }
 				.bodyValue(requestBody)

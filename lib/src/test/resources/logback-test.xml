@@ -9,4 +9,5 @@
 	</root>
 
 	<logger name="org.mockserver.log" level="OFF"/>
+	<logger name="org.loggingclientconnector" level="TRACE"/>
 </configuration>
