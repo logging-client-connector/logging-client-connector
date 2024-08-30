@@ -8,7 +8,18 @@ import static java.util.Objects.nonNull;
 
 public interface Fn {
 
-	static <T> OrElse ifNonNull(Supplier<T> fn, Runnable runnable) {
+	static OrElse doWhen(Boolean condition, Runnable runnable) {
+		if (condition) {
+			runnable.run();
+		}
+
+		return (orElse) -> {
+			if (!condition)
+				orElse.run();
+		};
+	}
+
+	static <T> OrElse doWhenNonNull(Supplier<T> fn, Runnable runnable) {
 		T result = fn.get();
 		if (nonNull(result)) {
 			runnable.run();
